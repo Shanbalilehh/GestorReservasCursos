@@ -1,11 +1,12 @@
-﻿using System;
+﻿using CapaEntidad.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace CapaEntidad
+namespace CapaEntidad.Repositorios
 {
     public class RepositorioJson<T> : IRepositorio<T> where T : class
     {

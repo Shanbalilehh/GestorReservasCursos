@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CapaEntidad
+namespace CapaEntidad.Entidades
 {
     public class Estudiante
     {
         public Guid Id { get; set; }
-        public string Nombre { get; set; }
+        public string? Nombre { get; set; }
         public string Correo { get; set; }
         public DateTime FechaRegistro { get; set; }
 

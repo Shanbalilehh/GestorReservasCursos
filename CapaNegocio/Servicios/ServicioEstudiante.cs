@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CapaEntidad;
+using CapaEntidad.Entidades;
+using CapaEntidad.Interfaces;
+using CapaNegocio.Interfaces;
 
-namespace CapaNegocio
+namespace CapaNegocio.Servicios
 {
     public class ServicioEstudiante : IServicioEstudiante
     {
