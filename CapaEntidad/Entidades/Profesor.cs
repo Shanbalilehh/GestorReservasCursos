@@ -7,24 +7,22 @@ using System.Text.Json.Serialization;
 
 namespace CapaEntidad.Entidades
 {
-    public class Estudiante
+    public class Profesor
     {
         public Guid Id { get; set; }
         public string Nombre { get; set; }
-        public string Correo { get; set; }
-        public DateTime FechaRegistro { get; set; }
+        public string Especialidad { get; set; }
 
         [JsonIgnore]
-        public List<Reserva> HistorialReservas { get; set; } = new List<Reserva>();
+        public List<Curso> CursosAsignados { get; set; } = new List<Curso>();
 
-        public Estudiante() { }
+        public Profesor() { }
 
-        public Estudiante(string nombre, string correo)
+        public Profesor(string nombre, string especialidad)
         {
             Id = Guid.NewGuid();
             Nombre = nombre;
-            Correo = correo;
-            FechaRegistro = DateTime.Now;
+            Especialidad = especialidad;
         }
     }
 }

@@ -14,7 +14,6 @@ namespace CapaEntidad.Repositorios
 
         public RepositorioJson(string nombreArchivo)
         {
-            // Guarda en la carpeta de ejecución (Debug/bin)
             _rutaArchivo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, nombreArchivo);
 
             // Si el archivo no existe, crea una lista vacía para evitar errores
@@ -65,7 +64,6 @@ namespace CapaEntidad.Repositorios
 
         private void GuardarEnArchivo(List<T> items)
         {
-            // WriteIndented = true hace que el JSON se vea bonito y legible
             var opciones = new JsonSerializerOptions { WriteIndented = true };
             string jsonString = JsonSerializer.Serialize(items, opciones);
             File.WriteAllText(_rutaArchivo, jsonString);

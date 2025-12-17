@@ -11,6 +11,5 @@ namespace CapaEntidad.Interfaces
         List<T> ObtenerTodos();
         T ObtenerPorId(Guid id);
         void Guardar(T entidad);
-        // Aquí irían Eliminar y Actualizar en el futuro
     }
 }
