@@ -1,0 +1,21 @@
+{
+  "settings": {
+    "indentation": {
+      "useTabs": false,
+      "size": 4
+    },
+    "documentationRules": {
+      "companyName": "GestorReservasCursos",
+      "documentExposedElements": true,
+      "documentInternalElements": false,
+      "documentPrivateElements": false
+    },
+    "orderingRules": {
+      "systemUsingDirectivesFirst": true,
+      "usingDirectivesPlacement": "outsideNamespace"
+    },
+    "namingRules": {
+      "allowCommonHungarianPrefixes": false
+    }
+  }
+}

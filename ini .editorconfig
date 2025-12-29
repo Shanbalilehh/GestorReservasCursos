@@ -1,0 +1,65 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.cs]
+# Ordenar using: System primero
+dotnet_sort_system_directives_first = true
+
+# Llaves y formato: forzar llaves y nueva línea antes de open-brace
+csharp_prefer_braces = true:warning
+csharp_new_line_before_open_brace = all:warning
+
+# Uso de var: explícito para tipos built-in
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = false:suggestion
+
+# Longitud máxima de línea (pista para revisiones; IDE puede alertar)
+max_line_length = 120
+
+# Naming rules: PascalCase para tipos/métodos públicos; camelCase para locales
+dotnet_naming_rule.methods_pascal_case.symbols = methods
+dotnet_naming_rule.methods_pascal_case.style = pascal_case
+dotnet_naming_rule.methods_pascal_case.severity = warning
+
+dotnet_naming_rule.types_pascal_case.symbols = types
+dotnet_naming_rule.types_pascal_case.style = pascal_case
+dotnet_naming_rule.types_pascal_case.severity = warning
+
+dotnet_naming_rule.locals_camel_case.symbols = locals
+dotnet_naming_rule.locals_camel_case.style = camel_case
+dotnet_naming_rule.locals_camel_case.severity = suggestion
+
+dotnet_naming_symbols.methods.applicable_kinds = method
+dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum, delegate
+dotnet_naming_symbols.locals.applicable_kinds = local
+
+dotnet_naming_style.pascal_case.capitalization = PascalCase
+dotnet_naming_style.camel_case.capitalization = camel_case
+
+# StyleCop / analyzers hints
+# Requerir documentación XML para elementos públicos
+dotnet_diagnostic.SA1600.severity = warning
+
+# Orden de usings y namespaces
+dotnet_diagnostic.SA1200.severity = warning
+
+# Forzar llaves en bloques
+dotnet_diagnostic.SA1500.severity = warning
+
+# Nombres de elementos públicos en PascalCase
+dotnet_diagnostic.SA1300.severity = warning
+
+# Enforce some formatting fixes
+dotnet_diagnostic.IDE0055.severity = suggestion

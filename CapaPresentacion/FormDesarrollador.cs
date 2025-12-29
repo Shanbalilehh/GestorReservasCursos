@@ -4,25 +4,33 @@ using CapaNegocio.Interfaces;
 
 namespace CapaPresentacion
 {
+    /// <summary>
+    /// Panel de control con acciones administrativas disponibles para el desarrollador/administrador.
+    /// </summary>
     public partial class FormDesarrollador : Form
     {
         // El admin necesita acceso a todos los servicios
         private readonly IServicioEstudiante _servEst;
-        private readonly IServicioProfesor _servInst;
+        private readonly IServicioProfesor _servProfesor;
         private readonly IServicioCurso _servCur;
 
-        public FormDesarrollador(IServicioEstudiante sEst, IServicioProfesor sInst, IServicioCurso sCur)
+        /// <summary>
+        /// Inicializa una nueva instancia de <see cref="FormDesarrollador"/>.
+        /// </summary>
+        /// <param name="sEst">Servicio de estudiantes.</param>
+        /// <param name="sProfesor">Servicio de profesores.</param>
+        /// <param name="sCur">Servicio de cursos.</param>
+        public FormDesarrollador(IServicioEstudiante sEst, IServicioProfesor sProfesor, IServicioCurso sCur)
         {
             InitializeComponent();
             _servEst = sEst;
-            _servInst = sInst;
+            _servProfesor = sProfesor;
             _servCur = sCur;
-
             this.Text = "Panel de Control - ADMINISTRADOR";
         }
 
         // --- GESTIÓN DE ESTUDIANTES ---
-        
+
         // Nombre sugerido en Designer: btnGuardarEstudiante
         private void btnGuardarEstudiante_Click(object sender, EventArgs e)
         {
@@ -47,9 +55,9 @@ namespace CapaPresentacion
 
             // DESPUÉS:
             MostrarAccionAdmin("crear curso");
-        }
+        }   
 
-        // --- GESTIÓN DE ProfesorES ---
+        // --- GESTIÓN DE PROFESORES ---
 
         // Nombre sugerido en Designer: btnRegistrarProfe
         private void btnRegistrarProfe_Click(object sender, EventArgs e)
