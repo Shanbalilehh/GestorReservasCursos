@@ -26,12 +26,14 @@ namespace CapaPresentacion
         // Nombre sugerido en Designer: btnGuardarEstudiante
         private void btnGuardarEstudiante_Click(object sender, EventArgs e)
         {
-            // Asume TextBox: txtNombreEst, txtCorreoEst
-            // string nombre = txtNombreEst.Text;
-            // string correo = txtCorreoEst.Text;
-            
-            // Lógica de guardado...
-            MessageBox.Show("Lógica de Admin para guardar estudiante");
+            // ANTES:
+            // // string nombre = txtNombreEst.Text;
+            // // string correo = txtCorreoEst.Text;
+            // // Lógica de guardado...
+            // // MessageBox.Show("Lógica de Admin para guardar estudiante");
+
+            // DESPUÉS: delegar notificación a método auxiliar para evitar duplicación y facilitar cambios futuros.
+            MostrarAccionAdmin("guardar estudiante");
         }
 
         // --- GESTIÓN DE CURSOS ---
@@ -39,8 +41,12 @@ namespace CapaPresentacion
         // Nombre sugerido en Designer: btnCrearCurso
         private void btnCrearCurso_Click(object sender, EventArgs e)
         {
-            // Lógica para crear curso nuevo
-            MessageBox.Show("Lógica de Admin para crear curso");
+            // ANTES:
+            // // Lógica para crear curso nuevo
+            // // MessageBox.Show("Lógica de Admin para crear curso");
+
+            // DESPUÉS:
+            MostrarAccionAdmin("crear curso");
         }
 
         // --- GESTIÓN DE ProfesorES ---
@@ -48,8 +54,23 @@ namespace CapaPresentacion
         // Nombre sugerido en Designer: btnRegistrarProfe
         private void btnRegistrarProfe_Click(object sender, EventArgs e)
         {
-            // Lógica para registrar Profesor
-             MessageBox.Show("Lógica de Admin para registrar profesor");
+            // ANTES:
+            // // Lógica para registrar Profesor
+            // // MessageBox.Show("Lógica de Admin para registrar profesor");
+
+            // DESPUÉS:
+            MostrarAccionAdmin("registrar profesor");
+        }
+
+        /// <summary>
+        /// Método auxiliar para centralizar la notificación de acciones administrativas.
+        /// Refactor aplicado para eliminar duplicación de MessageBox.Show.
+        /// </summary>
+        /// <param name="accion">Descripción corta de la acción realizada.</param>
+        private void MostrarAccionAdmin(string accion)
+        {
+            // Aquí se puede añadir localización, logging o formato unificado.
+            MessageBox.Show($"Lógica de Admin para {accion}");
         }
     }
 }
