@@ -12,5 +12,6 @@ namespace CapaNegocio.Interfaces
         void Reservar(Guid estudianteId, Guid cursoId);
         List<Reserva> ObtenerReservasPorEstudiante(Guid estudianteId);
         int ObtenerCantidadInscritos(Guid cursoId);
+        List<Reserva> ObtenerReservasPorCurso(Guid cursoId);
     }
 }

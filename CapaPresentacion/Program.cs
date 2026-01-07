@@ -16,113 +16,81 @@ namespace CapaPresentacion
 
             try
             {
+                // Configuración de archivos
                 string fileEst = "estudiantes.json";
-                string filePro = "profesores.json";
+                string fileInst = "Profesores.json";
                 string fileCur = "cursos.json";
                 string fileRes = "reservas.json";
-                // Repositorios
+
                 var repoEstudiante = new RepositorioJson<Estudiante>(fileEst);
-                var repoProfesor = new RepositorioJson<Profesor>(filePro);
+                var repoProfesor = new RepositorioJson<Profesor>(fileInst);
                 var repoCurso      = new RepositorioJson<Curso>(fileCur);
                 var repoReserva    = new RepositorioJson<Reserva>(fileRes);
 
-                // --- DATA SEEDING (Datos de Prueba Hardcodeados) ---
-                // Ahora borramos y creamos de nuevo cada vez que inicia la app
-                ReiniciarDatosDePrueba(repoProfesor, repoCurso, repoReserva, filePro, fileCur, fileRes);
+                // DATA SEEDING (Reinicio de datos)
+                ReiniciarDatosDePrueba(repoEstudiante, repoProfesor, repoCurso, repoReserva, fileEst, fileInst, fileCur, fileRes);
+
                 // Servicios
-                var servicioEstudiante = new ServicioEstudiante(repoEstudiante);
-                var servicioProfesor = new ServicioProfesor(repoProfesor);
-                var servicioCurso      = new ServicioCurso(repoCurso, repoProfesor);
-                var servicioReserva    = new ServicioReserva(repoReserva, repoCurso);
+                var servAuth = new ServicioAutenticacion();
+                var servEst = new ServicioEstudiante(repoEstudiante);
+                var servInst = new ServicioProfesor(repoProfesor);
+                var servCur = new ServicioCurso(repoCurso, repoProfesor);
+                var servRes = new ServicioReserva(repoReserva, repoCurso);
 
-                
-                FormLogin login = new FormLogin();
-                DialogResult resultadoLogin = login.ShowDialog();
-
-                if (resultadoLogin == DialogResult.OK)
-                {
-                    UsuarioSesion usuario = login.UsuarioLogueado;
-                    Form ventanaPrincipal = null;
-
-                    switch (usuario.Rol)
-                    {
-                        case RolUsuario.Estudiante:
-                            // Estudiante: Ve Cursos y puede Reservar
-                            ventanaPrincipal = new FormEstudiante(usuario, servicioReserva, servicioCurso);
-                            break;
-
-                        case RolUsuario.Profesor:
-                            // Profesor: Ve sus datos Y SUS CURSOS (¡Actualizado!)
-                            ventanaPrincipal = new FormProfesor(usuario, servicioProfesor, servicioCurso);
-                            break;
-
-                        case RolUsuario.Desarrollador:
-                            // Admin: Ve todo
-                            ventanaPrincipal = new FormDesarrollador(servicioEstudiante, servicioProfesor, servicioCurso);
-                            break;
-
-                        default:
-                            MessageBox.Show("Rol no reconocido.", "Acceso Denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return;
-                    }
-
-                    if (ventanaPrincipal != null)
-                    {
-                        Application.Run(ventanaPrincipal);
-                    }
-                }
+                Application.Run(new FormPrincipal(servAuth, servEst, servInst, servCur, servRes));
             }
             catch (Exception ex)
             {
-                // Utilidades.RegistrarError("Program", "Main", ex.Message);
-                MessageBox.Show($"Error crítico: {ex.Message}", "Fatal", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            }        
+                MessageBox.Show($"Error crítico: {ex.Message}");
+            }
         }
+
         private static void ReiniciarDatosDePrueba(
+            IRepositorio<Estudiante> repoEst,
             IRepositorio<Profesor> repoInst, 
             IRepositorio<Curso> repoCurs,
-            IRepositorio<Reserva> repoRes, // Agregamos repo reservas para limpiarlas también
-            string fInst, string fCur, string fRes)
+            IRepositorio<Reserva> repoRes,
+            string fEst, string fInst, string fCur, string fRes)
         {
-            // 1. LIMPIEZA TOTAL (Reset)
-            // Borramos los archivos para asegurar que iniciamos en blanco
-            BorrarArchivo(fInst);
-            BorrarArchivo(fCur);
-            BorrarArchivo(fRes); 
-            // Nota: No borramos estudiantes.json para no perder tu usuario de prueba si lo creaste manualmente,
-            // pero podrías borrarlo también si quisieras.
+            // 1. LIMPIEZA SEGURA (Reset)
+            // En lugar de borrar el archivo (lo que causa error al leer), 
+            // escribimos "[]" para indicar una lista vacía válida.
+            ResetearArchivo(fEst);
+            ResetearArchivo(fInst);
+            ResetearArchivo(fCur);
+            ResetearArchivo(fRes);
 
-            // 2. CREAR ProfesorES
-            var profe1 = new Profesor("Dr. House", "Medicina Diagnóstica");
-            var profe2 = new Profesor("Walter White", "Química Avanzada");
+            // 2. CREAR USUARIOS FIJOS
+            Guid idProfeFijo = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var profe1 = new Profesor("Profesor X", "Mutantes") { Id = idProfeFijo };
+            
+            Guid idAlumnoFijo = Guid.Parse("22222222-2222-2222-2222-222222222222");
+            var alumno1 = new Estudiante("Juan Perez", "juan@test.com") { Id = idAlumnoFijo };
 
-            // Guardamos (esto creará los archivos de nuevo)
             repoInst.Guardar(profe1);
-            repoInst.Guardar(profe2);
+            repoEst.Guardar(alumno1);
 
-            // 3. CREAR CURSOS
-            // Curso 1: Medicina (Cupo limitado para probar validación de 'Lleno')
-            var curso1 = new Curso("Diagnóstico Diferencial", "Lun-Mie 10:00", 2, profe1.Id);
-            
-            // Curso 2: Química (Cupo amplio)
-            var curso2 = new Curso("Cristalografía Básica", "Mar-Jue 14:00", 20, profe2.Id);
-            
-            // Curso 3: Otro de Química
-            var curso3 = new Curso("Seguridad en Laboratorio", "Vie 09:00", 15, profe2.Id);
+            // 3. CREAR CURSOS ASIGNADOS
+            var curso1 = new Curso("Lógica de Programación", "Lun-Mie 10:00", 5, idProfeFijo);
+            var curso2 = new Curso("SQL Server Avanzado", "Mar-Jue 18:00", 20, idProfeFijo);
 
             repoCurs.Guardar(curso1);
             repoCurs.Guardar(curso2);
-            repoCurs.Guardar(curso3);
         }
 
-        private static void BorrarArchivo(string nombreArchivo)
+        // Método actualizado: Escribe [] en lugar de borrar
+        private static void ResetearArchivo(string nombreArchivo)
         {
-            string rutaCompleta = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, nombreArchivo);
-            if (File.Exists(rutaCompleta))
+            try 
             {
-                File.Delete(rutaCompleta);
+                string rutaCompleta = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, nombreArchivo);
+                // Sobrescribimos con un array vacío. Así File.ReadAllText no falla después.
+                File.WriteAllText(rutaCompleta, "[]");
             }
-        }
-        
+            catch 
+            {
+                // Ignoramos errores de escritura (ej. archivo bloqueado) en entorno de prueba
+            }
+        }        
     }
 }

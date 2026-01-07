@@ -42,10 +42,14 @@ namespace CapaNegocio.Servicios
             return _repoReserva.ObtenerTodos().Where(r => r.EstudianteId == estudianteId).ToList();
         }
 
-        // IMPLEMENTACIÓN DEL NUEVO MÉTODO (Conteo eficiente)
         public int ObtenerCantidadInscritos(Guid cursoId)
         {
             return _repoReserva.ObtenerTodos().Count(r => r.CursoId == cursoId);
+        }
+        
+        public List<Reserva> ObtenerReservasPorCurso(Guid cursoId)
+        {
+            return _repoReserva.ObtenerTodos().Where(r => r.CursoId == cursoId).ToList();
         }
     }
 }

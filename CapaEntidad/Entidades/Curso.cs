@@ -24,13 +24,13 @@ namespace CapaEntidad.Entidades
 
         public Curso() { }
 
-        public Curso(string nombre, string horario, int cupoMaximo, Guid ProfesorId)
+        public Curso(string nombre, string horario, int cupoMaximo, Guid profesorId)
         {
             Id = Guid.NewGuid();
             Nombre = nombre;
             Horario = horario;
             CupoMaximo = cupoMaximo;
-            ProfesorId = ProfesorId;
+            ProfesorId = profesorId;
         }
     }
 }
