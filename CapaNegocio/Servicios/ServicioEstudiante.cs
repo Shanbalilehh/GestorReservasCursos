@@ -11,14 +11,9 @@ namespace CapaNegocio.Servicios
 {
     public class ServicioEstudiante : IServicioEstudiante
     {
-        private readonly IRepositorio<Estudiante> _repositorioEstudiante;
-
-        public ServicioEstudiante(IRepositorio<Estudiante> repoEstudiante)
-        {
-            _repositorioEstudiante = repoEstudiante;
-        }
-
-        public void RegistrarEstudiante(string nombre, string correo)
+        private readonly IRepositorio<Estudiante> _repo;
+        public ServicioEstudiante(IRepositorio<Estudiante> repo) { _repo = repo; }
+        public Guid RegistrarEstudiante(string nombre, string correo)
         {
             // Validaciones de Negocio
             if (string.IsNullOrWhiteSpace(nombre))
@@ -28,22 +23,18 @@ namespace CapaNegocio.Servicios
                 throw new ArgumentException("El correo electrónico no es válido.");
 
             // Verificar duplicados (Regla de Negocio: No repetir correo)
-            var estudiantesExistentes = _repositorioEstudiante.ObtenerTodos();
+            var estudiantesExistentes = _repo.ObtenerTodos();
             if (estudiantesExistentes.Any(e => e.Correo.Equals(correo, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new InvalidOperationException("Ya existe un estudiante registrado con ese correo.");
             }
 
             // Crear Entidad
-            var nuevoEstudiante = new Estudiante(nombre, correo);
-
-            // Persistir (Guardar en JSON)
-            _repositorioEstudiante.Guardar(nuevoEstudiante);
+            var nuevo = new Estudiante(nombre, correo);
+            _repo.Guardar(nuevo);
+            
+            return nuevo.Id;
         }
-
-        public List<Estudiante> ObtenerListaEstudiantes()
-        {
-            return _repositorioEstudiante.ObtenerTodos();
-        }
+        public List<Estudiante> ObtenerListaEstudiantes() => _repo.ObtenerTodos();
     }
 }

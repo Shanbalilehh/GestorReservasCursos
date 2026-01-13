@@ -51,5 +51,12 @@ namespace CapaNegocio.Servicios
         {
             return _repoReserva.ObtenerTodos().Where(r => r.CursoId == cursoId).ToList();
         }
+        public void CancelarReserva(Guid reservaId)
+        {
+            // Aquí podrías validar reglas de negocio extras
+            // Ej: "No se puede cancelar si el curso ya empezó"
+            
+            _repoReserva.Eliminar(reservaId);
+        }
     }
 }

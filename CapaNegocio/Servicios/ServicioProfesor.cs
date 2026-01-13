@@ -11,21 +11,18 @@ namespace CapaNegocio.Servicios
 {
     public class ServicioProfesor : IServicioProfesor
     {
-        private readonly IRepositorio<Profesor> _repoProfesor;
-
-        public ServicioProfesor(IRepositorio<Profesor> repoProfesor)
+        private readonly IRepositorio<Profesor> _repo;
+        public ServicioProfesor(IRepositorio<Profesor> repo) { _repo = repo; }
+        public Guid RegistrarProfesor(string nombre, string especialidad)
         {
-            _repoProfesor = repoProfesor;
+            if (string.IsNullOrWhiteSpace(nombre)) throw new ArgumentException("Nombre requerido");
+            
+            var nuevo = new Profesor(nombre, especialidad);
+            _repo.Guardar(nuevo);
+            
+            return nuevo.Id; // Retornamos ID
         }
 
-        public void RegistrarProfesor(string nombre, string especialidad)
-        {
-            if (string.IsNullOrWhiteSpace(nombre)) throw new ArgumentException("El nombre es obligatorio.");
-            if (string.IsNullOrWhiteSpace(especialidad)) throw new ArgumentException("La especialidad es obligatoria.");
-
-            _repoProfesor.Guardar(new Profesor(nombre, especialidad));
-        }
-
-        public List<Profesor> ObtenerTodos() => _repoProfesor.ObtenerTodos();
+        public List<Profesor> ObtenerTodos() => _repo.ObtenerTodos();
     }
 }

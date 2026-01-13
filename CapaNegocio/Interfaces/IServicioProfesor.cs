@@ -9,7 +9,7 @@ namespace CapaNegocio.Interfaces
 {
     public interface IServicioProfesor
     {
-        void RegistrarProfesor(string nombre, string especialidad);
+        Guid RegistrarProfesor(string nombre, string especialidad);
         List<Profesor> ObtenerTodos();
     }
 }

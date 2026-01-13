@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using CapaEntidad.Entidades;
+using CapaEntidad.Interfaces;
 
 namespace CapaNegocio.Servicios
 {
@@ -21,40 +24,40 @@ namespace CapaNegocio.Servicios
     // 3. Servicio de Autenticación
     public class ServicioAutenticacion
     {
-        public UsuarioSesion Login(string usuario, string password)
+        private readonly IRepositorio<Usuario> _repoUsuarios;
+        public ServicioAutenticacion(IRepositorio<Usuario> repoUsuarios)
         {
+            _repoUsuarios = repoUsuarios;
+        }
+
+        public UsuarioSesion Login(string user, string pass)
+        {
+            var usuarios = _repoUsuarios.ObtenerTodos();
             
-            if (usuario == "admin" && password == "admin123")
-            {
-                return new UsuarioSesion 
-                { 
-                    Id = Guid.NewGuid(), 
-                    Username = "Admin", 
-                    Rol = RolUsuario.Desarrollador 
-                };
-            }
+            // Buscar coincidencia exacta
+            var cuenta = usuarios.FirstOrDefault(u => u.Username == user && u.Password == pass);
 
-            if (usuario == "profe" && password == "profe123")
+            if (cuenta != null)
             {
-                return new UsuarioSesion 
-                { 
-                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), 
-                    Username = "Profesor X", 
-                    Rol = RolUsuario.Profesor 
-                };
-            }
-
-            if (usuario == "alumno" && password == "alumno123")
-            {
-                return new UsuarioSesion 
-                { 
-                    Id = Guid.Parse("22222222-2222-2222-2222-222222222222"), 
-                    Username = "Juan Perez", 
-                    Rol = RolUsuario.Estudiante 
+                return new UsuarioSesion
+                {
+                    Id = cuenta.EntidadId, // ¡Clave! Pasamos el ID del Estudiante/Profe
+                    Username = cuenta.Username,
+                    Rol = (RolUsuario)cuenta.Rol
                 };
             }
 
             return null;
         }
+
+        public void RegistrarUsuario(string user, string pass, RolUsuario rol, Guid entidadId)
+        {
+            if (_repoUsuarios.ObtenerTodos().Any(u => u.Username == user))
+                throw new InvalidOperationException("El nombre de usuario ya existe.");
+
+            var nuevoUsuario = new Usuario(user, pass, (int)rol, entidadId);
+            _repoUsuarios.Guardar(nuevoUsuario);
+        }
+        
     }
 }

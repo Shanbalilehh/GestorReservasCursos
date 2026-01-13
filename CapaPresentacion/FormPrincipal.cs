@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq; 
 using System.Windows.Forms;
 using CapaNegocio.Servicios;
 using CapaNegocio.Interfaces;
@@ -24,7 +20,7 @@ namespace CapaPresentacion
         private readonly IServicioCurso _servCur;
         private readonly IServicioReserva _servRes;
 
-        // --- PESTAÑAS (Referencias) ---
+        // --- REFERENCIAS A PESTAÑAS ---
         private TabPage _paginaLogin;
         private TabPage _paginaEstudiante;
         private TabPage _paginaProfesor;
@@ -45,7 +41,7 @@ namespace CapaPresentacion
             _servCur = sCur;
             _servRes = sRes;
 
-            // Guardar referencias de pestañas
+            
             _paginaLogin = tabControlPrincipal.TabPages["tabLogin"];
             _paginaEstudiante = tabControlPrincipal.TabPages["tabEstudiante"];
             _paginaProfesor = tabControlPrincipal.TabPages["tabProfesor"];
@@ -80,13 +76,15 @@ namespace CapaPresentacion
 
                 case RolUsuario.Desarrollador:
                     tabControlPrincipal.TabPages.Add(_paginaAdmin);
-                    InicializarModuloAdmin();
+                    InicializarModuloAdmin(); 
                     break;
             }
         }
+
+        // --- LOGIN ---
         private void btnIngresar_Click(object sender, EventArgs e)
         {
-            string user = txtUser.Text; // Asume que existen en tabLogin
+            string user = txtUser.Text;
             string pass = txtPass.Text;
 
             var usuario = _servAuth.Login(user, pass);
@@ -94,12 +92,9 @@ namespace CapaPresentacion
             if (usuario != null)
             {
                 _usuarioActual = usuario;
-                this.Text = $"Sesión iniciada: {_usuarioActual.Username}";
-
-                // MAGIA: Habilitamos la pestaña correspondiente
+                this.Text = $"Portal {_usuarioActual.Rol} - {_usuarioActual.Username}";
                 HabilitarModulo(_usuarioActual.Rol);
 
-                // Limpiar campos por seguridad
                 txtUser.Clear();
                 txtPass.Clear();
             }
@@ -109,12 +104,6 @@ namespace CapaPresentacion
             }
         }
 
-        private void btnCancelar_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
-
         private void btnCerrarSesion_Click(object sender, EventArgs e)
         {
             _usuarioActual = null;
@@ -122,9 +111,8 @@ namespace CapaPresentacion
         }
 
         // =========================================================
-        // MÓDULO ESTUDIANTE
+        // MÓDULO ESTUDIANTE 
         // =========================================================
-        
         private void InicializarModuloEstudiante()
         {
             ConfigurarGridsEstudiante();
@@ -133,70 +121,42 @@ namespace CapaPresentacion
 
         private void ConfigurarGridsEstudiante()
         {
-            // Asumiendo que dgvCursos y dgvMisReservas existen en tabEstudiante
+            if (dgvCursos == null || dgvMisReservas == null) return;
             DataGridView[] grids = { dgvCursos, dgvMisReservas };
-
-            foreach (var grid in grids)
-            {
-                if (grid == null) continue; // Protección por si no se han creado en Designer
-                grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                grid.MultiSelect = false;
-                grid.ReadOnly = true;
-                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                grid.RowHeadersVisible = false;
-                grid.AllowUserToAddRows = false;
-            }
+            foreach (var grid in grids) { EstilizarGrid(grid); }
         }
 
         private void ActualizarPantallasEstudiante()
         {
-            CargarOfertaAcademica();
-            CargarHistorialReservas();
-        }
-
-        private void CargarOfertaAcademica()
-        {
-            try 
+            // 1. Cargar Oferta
+            try
             {
                 var cursos = _servCur.ObtenerOfertaAcademica();
-                
-                // ViewModel con cálculo de cupos
-                var listaVisual = cursos.Select(c => {
+                var Profesores = _servInst.ObtenerTodos();
+
+                var listaVisual = cursos.Select(c =>
+                {
                     int ocupados = _servRes.ObtenerCantidadInscritos(c.Id);
                     int disponibles = c.CupoMaximo - ocupados;
+                    var nombreProfe = Profesores.FirstOrDefault(i => i.Id == c.ProfesorId)?.Nombre ?? "Sin Asignar";
 
-                    return new 
-                    {
-                        Id = c.Id, 
-                        Curso = c.Nombre,
-                        Horario = c.Horario,
-                        Disponibilidad = disponibles > 0 ? $"{disponibles} lugares" : "AGOTADO"
-                    };
+                    return new { Id = c.Id, Curso = c.Nombre, Profesor = nombreProfe, Horario = c.Horario, Disponibilidad = disponibles > 0 ? $"{disponibles} lugares" : "AGOTADO" };
                 }).ToList();
 
-                dgvCursos.DataSource = null;
                 dgvCursos.DataSource = listaVisual;
-                
                 if (dgvCursos.Columns["Id"] != null) dgvCursos.Columns["Id"].Visible = false;
             }
-            catch (Exception ex)
-            {
-                Utilidades.RegistrarError(nameof(FormPrincipal), "CargarOferta", ex.Message);
-            }
-        }
+            catch (Exception ex) { Utilidades.RegistrarError(nameof(FormPrincipal), "CargarOferta", ex.Message); }
 
-        private void CargarHistorialReservas()
-        {
+            // 2. Cargar Historial
             try
             {
                 var misReservas = _servRes.ObtenerReservasPorEstudiante(_usuarioActual.Id);
-                // Traemos todos los Profesores para buscar nombres
-                var Profesores = _servInst.ObtenerTodos(); 
+                var Profesores = _servInst.ObtenerTodos();
 
-                var listaHistorial = misReservas.Select(r => {
+                var listaHistorial = misReservas.Select(r =>
+                {
                     var curso = _servCur.ObtenerCursoPorId(r.CursoId);
-                    
-                    // Lógica segura: Si el curso existe, buscamos el Profesor por ID en nuestra lista local
                     string nombreProfe = "No Asignado";
                     string nombreCurso = "Curso Eliminado";
                     string horarioCurso = "-";
@@ -205,166 +165,234 @@ namespace CapaPresentacion
                     {
                         nombreCurso = curso.Nombre;
                         horarioCurso = curso.Horario;
-                        // Buscamos el nombre usando el ID, no la propiedad de navegación vacía
                         nombreProfe = Profesores.FirstOrDefault(i => i.Id == curso.ProfesorId)?.Nombre ?? "Sin Asignar";
                     }
 
-                    return new { 
-                        ReservaId = r.Id, 
-                        Fecha = r.FechaReserva.ToShortDateString(), 
-                        Curso = nombreCurso, 
-                        Horario = horarioCurso,
-                        Profesor = nombreProfe // ¡Ahora sí aparecerá!
-                    };
+                    return new { ReservaId = r.Id, Fecha = r.FechaReserva.ToShortDateString(), Curso = nombreCurso, Horario = horarioCurso, Profesor = nombreProfe };
                 }).ToList();
 
-                dgvMisReservas.DataSource = null;
                 dgvMisReservas.DataSource = listaHistorial;
-                
                 if (dgvMisReservas.Columns["ReservaId"] != null) dgvMisReservas.Columns["ReservaId"].Visible = false;
             }
-            catch (Exception ex)
-            {
-                Utilidades.RegistrarError(nameof(FormPrincipal), "CargarHistorial", ex.Message);
-            }
+            catch (Exception ex) { Utilidades.RegistrarError(nameof(FormPrincipal), "CargarHistorial", ex.Message); }
         }
 
         private void btnReservar_Click(object sender, EventArgs e)
         {
-            if (dgvCursos.SelectedRows.Count == 0)
+            if (dgvCursos.SelectedRows.Count == 0) return;
+            try
             {
-                MessageBox.Show("Selecciona un curso.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Guid cursoId = (Guid)dgvCursos.SelectedRows[0].Cells["Id"].Value;
+                if (MessageBox.Show("¿Confirmar reserva?", "Reservar", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    _servRes.Reservar(_usuarioActual.Id, cursoId);
+                    MessageBox.Show("¡Reserva exitosa!");
+                    ActualizarPantallasEstudiante();
+                }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+        private void btnCancelarReserva_Click(object sender, EventArgs e)
+        {
+            // 1. Validar que haya una fila seleccionada
+            if (dgvMisReservas.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Selecciona una reserva para cancelar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
-                Guid cursoId = (Guid)dgvCursos.SelectedRows[0].Cells["Id"].Value;
-                string nombreCurso = dgvCursos.SelectedRows[0].Cells["Curso"].Value.ToString();
+                // 2. Obtener el ID 
+                Guid reservaId = (Guid)dgvMisReservas.SelectedRows[0].Cells["ReservaId"].Value;
+                string nombreCurso = dgvMisReservas.SelectedRows[0].Cells["Curso"].Value.ToString();
 
-                var confirm = MessageBox.Show($"¿Reservar cupo en '{nombreCurso}'?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                
+                // 3. Confirmación
+                var confirm = MessageBox.Show(
+                    $"¿Estás seguro de cancelar tu inscripción al curso '{nombreCurso}'?\nLibera espacio para otros estudiantes.", 
+                    "Confirmar Cancelación", 
+                    MessageBoxButtons.YesNo, 
+                    MessageBoxIcon.Question);
+
                 if (confirm == DialogResult.Yes)
                 {
-                    _servRes.Reservar(_usuarioActual.Id, cursoId);
-                    
-                    MessageBox.Show("¡Reserva exitosa!");
-                    ActualizarPantallasEstudiante(); // Refrescar cupos
-                    
-                    // Opcional: Cambiar foco a pestaña mis reservas si tuvieras un sub-tab
+                    // 4. Llamar al servicio
+                    _servRes.CancelarReserva(reservaId);
+
+                    MessageBox.Show("Inscripción cancelada exitosamente.", "Hecho", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // 5. Refrescar TODO
+                    // Esto quitará la reserva de la lista Y aumentará los cupos disponibles en la otra tabla
+                    ActualizarPantallasEstudiante();
                 }
             }
             catch (Exception ex)
             {
-                Utilidades.RegistrarError(nameof(FormPrincipal), "Reservar", ex.Message);
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Utilidades.RegistrarError(nameof(FormPrincipal), "CancelarReserva", ex.Message);
+                MessageBox.Show("Error al cancelar: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
         }
-        
+
         // =========================================================
-        // MÓDULO PROFESOR (Lógica Integrada)
+        // MÓDULO PROFESOR
         // =========================================================
-        
         private void InicializarModuloProfesor()
         {
-            ConfigurarGridProfesor();
+            if (dgvMisCursos != null) EstilizarGrid(dgvMisCursos);
             CargarCursosProfesor();
-        }
-
-        private void ConfigurarGridProfesor()
-        {
-            if (dgvMisCursos == null) return;
-
-            dgvMisCursos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvMisCursos.MultiSelect = false;
-            dgvMisCursos.ReadOnly = true;
-            dgvMisCursos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvMisCursos.RowHeadersVisible = false;
-            dgvMisCursos.AllowUserToAddRows = false;
         }
 
         private void CargarCursosProfesor()
         {
             try
             {
-                // 1. Obtenemos TODOS los cursos
                 var ofertaTotal = _servCur.ObtenerOfertaAcademica();
-
-                // 2. FILTRADO: Buscamos cursos donde ProfesorId == ID del Usuario Actual
-                // Nota: Usamos 'ProfesorId' (Nombre de la Entidad), no 'ProfesorId'
                 var misCursos = ofertaTotal
                                 .Where(c => c.ProfesorId == _usuarioActual.Id)
-                                .Select(c => new 
-                                {
-                                    Id = c.Id,
-                                    Nombre = c.Nombre,
-                                    Horario = c.Horario,
-                                    Cupo = c.CupoMaximo,
-                                    Inscritos = _servRes.ObtenerCantidadInscritos(c.Id) // Agregamos dato útil para el profe
-                                })
+                                .Select(c => new { Id = c.Id, Nombre = c.Nombre, Horario = c.Horario, Cupo = c.CupoMaximo, Inscritos = _servRes.ObtenerCantidadInscritos(c.Id) })
                                 .ToList();
 
-                // 3. Enlazar
-                dgvMisCursos.DataSource = null;
                 dgvMisCursos.DataSource = misCursos;
-
-                // 4. Ocultar ID
                 if (dgvMisCursos.Columns["Id"] != null) dgvMisCursos.Columns["Id"].Visible = false;
             }
-            catch (Exception ex)
-            {
-                Utilidades.RegistrarError(nameof(FormPrincipal), "CargarCursosProfesor", ex.Message);
-                MessageBox.Show($"Error al cargar sus cursos: {ex.Message}");
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
         private void btnVerDetalle_Click(object sender, EventArgs e)
         {
-            if (dgvMisCursos.SelectedRows.Count == 0)
+            if (dgvMisCursos.SelectedRows.Count == 0) return;
+            try
             {
-                MessageBox.Show("Seleccione un curso para ver los alumnos inscritos.");
-                return;
-            }
-
-            try 
-            {
-                // 1. Obtener datos del curso seleccionado
                 Guid cursoId = (Guid)dgvMisCursos.SelectedRows[0].Cells["Id"].Value;
                 string nombreCurso = dgvMisCursos.SelectedRows[0].Cells["Nombre"].Value.ToString();
-                
-                // 2. Obtener las reservas de ese curso (Usando el nuevo método del servicio)
-                var reservas = _servRes.ObtenerReservasPorCurso(cursoId);
 
-                if (reservas.Count == 0)
+                var reservas = _servRes.ObtenerReservasPorCurso(cursoId);
+                if (reservas.Count == 0) { MessageBox.Show("Sin alumnos inscritos."); return; }
+
+                var todosLosEstudiantes = _servEst.ObtenerListaEstudiantes();
+                var alumnosInscritos = from r in reservas join est in todosLosEstudiantes on r.EstudianteId equals est.Id select est.Nombre;
+
+                MessageBox.Show($"Alumnos en '{nombreCurso}':\n\n{string.Join(Environment.NewLine, alumnosInscritos)}", "Asistencia");
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
+        // =========================================================
+        // MÓDULO ADMIN (DESARROLLADOR)
+        // =========================================================
+        private void InicializarModuloAdmin()
+        {
+            CargarComboProfesores();
+        }
+
+        private void CargarComboProfesores()
+        {
+            try
+            {
+                var listaProfes = _servInst.ObtenerTodos();
+                cboProfesores.DataSource = null; // Reset crucial
+                cboProfesores.DataSource = listaProfes;
+                cboProfesores.DisplayMember = "Nombre";
+                cboProfesores.ValueMember = "Id";
+            }
+            catch (Exception ex) { MessageBox.Show("Error cargando Profesores: " + ex.Message); }
+        }
+
+        // 1. Guardar Estudiante
+        private void btnGuardarEst_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Datos Personales
+                string nombre = Utilidades.LimpiarTexto(txtNombreEst.Text);
+                string correo = Utilidades.NormalizarCorreo(txtCorreoEst.Text);
+
+                // Datos de Login
+                string user = Utilidades.LimpiarTexto(txtUserEst.Text);
+                string pass = txtPassEst.Text; // Password no se limpia ni normaliza
+
+                if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
                 {
-                    MessageBox.Show($"El curso '{nombreCurso}' no tiene alumnos inscritos aún.", "Detalle del Curso");
+                    MessageBox.Show("Debe asignar un usuario y contraseña.");
                     return;
                 }
 
-                // 3. CRUZAR DATOS (JOIN): Obtener nombres de estudiantes
-                // Traemos todos los estudiantes para buscar sus nombres
-                var todosLosEstudiantes = _servEst.ObtenerListaEstudiantes();
+                // A. Crear Estudiante y OBTENER ID
+                Guid nuevoId = _servEst.RegistrarEstudiante(nombre, correo);
 
-                // Usamos LINQ para unir Reserva con Estudiante
-                var alumnosInscritos = from r in reservas
-                                       join est in todosLosEstudiantes on r.EstudianteId equals est.Id
-                                       select est.Nombre; // Solo nos interesa el nombre
+                // B. Crear Usuario vinculado a ese ID
+                _servAuth.RegistrarUsuario(user, pass, RolUsuario.Estudiante, nuevoId);
 
-                // 4. Mostrar en un mensaje (Lista separada por saltos de línea)
-                string listaNombres = string.Join(Environment.NewLine, alumnosInscritos);
+                MessageBox.Show($"Estudiante y cuenta '{user}' creados exitosamente.");
 
-                MessageBox.Show($"Alumnos en '{nombreCurso}':\n\n{listaNombres}", 
-                                "Lista de Asistencia", 
-                                MessageBoxButtons.OK, 
-                                MessageBoxIcon.Information);
+                // Limpiar todo...
+                txtNombreEst.Clear(); txtCorreoEst.Clear(); txtUserEst.Clear(); txtPassEst.Clear();
             }
-            catch (Exception ex)
-            {
-                Utilidades.RegistrarError(nameof(FormPrincipal), "VerDetalle", ex.Message);
-                MessageBox.Show("Error al obtener detalles: " + ex.Message);
-            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
-        private void InicializarModuloAdmin() { }
+
+        // 2. Guardar Profesor
+        private void btnGuardarProf_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string nombre = Utilidades.LimpiarTexto(txtNombreProf.Text);
+                string esp = Utilidades.LimpiarTexto(txtEspecialidadProf.Text);
+
+                string user = Utilidades.LimpiarTexto(txtUserProf.Text);
+                string pass = txtPassProf.Text;
+
+                if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
+                {
+                    MessageBox.Show("Debe asignar un usuario y contraseña.");
+                    return;
+                }
+
+                // A. Crear Instructor y OBTENER ID
+                Guid nuevoId = _servInst.RegistrarProfesor(nombre, esp);
+
+                // B. Crear Usuario vinculado
+                _servAuth.RegistrarUsuario(user, pass, RolUsuario.Profesor, nuevoId);
+
+                MessageBox.Show($"Instructor y cuenta '{user}' creados.");
+
+                txtNombreProf.Clear(); txtEspecialidadProf.Clear(); txtUserProf.Clear(); txtPassProf.Clear();
+                CargarComboProfesores();
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
+        // 3. Guardar Curso
+        private void btnGuardarCur_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (cboProfesores.SelectedIndex == -1) { MessageBox.Show("Seleccione Profesor."); return; }
+
+                string nombre = Utilidades.LimpiarTexto(txtNombreCur.Text);
+                string horario = Utilidades.LimpiarTexto(txtHorarioCur.Text);
+                int cupo = (int)numCupoCur.Value;
+                Guid ProfesorId = (Guid)cboProfesores.SelectedValue;
+
+                _servCur.CrearCurso(nombre, horario, cupo, ProfesorId);
+                MessageBox.Show("Curso creado.");
+
+                txtNombreCur.Clear(); txtHorarioCur.Clear(); numCupoCur.Value = 20;
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
+        // Utilitario visual
+        private void EstilizarGrid(DataGridView grid)
+        {
+            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grid.MultiSelect = false;
+            grid.ReadOnly = true;
+            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            grid.RowHeadersVisible = false;
+            grid.AllowUserToAddRows = false;
+        }
+
+        
     }
 }

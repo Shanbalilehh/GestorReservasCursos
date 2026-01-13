@@ -68,5 +68,32 @@ namespace CapaEntidad.Repositorios
             string jsonString = JsonSerializer.Serialize(items, opciones);
             File.WriteAllText(_rutaArchivo, jsonString);
         }
+
+        public void Eliminar(Guid id)
+        {
+            // 1. Traer todo a memoria
+            var lista = ObtenerTodos();
+
+            // 2. Buscar el objeto a eliminar
+            // Usamos reflexión porque T es genérico y no sabemos si tiene una propiedad "Id"
+            // (Aunque nuestras entidades sí la tienen)
+            var itemAEliminar = lista.FirstOrDefault(item =>
+            {
+                var prop = item.GetType().GetProperty("Id");
+                if (prop != null)
+                {
+                    var valorId = (Guid)prop.GetValue(item);
+                    return valorId == id;
+                }
+                return false;
+            });
+
+            // 3. Si existe, lo borramos y guardamos el archivo de nuevo
+            if (itemAEliminar != null)
+            {
+                lista.Remove(itemAEliminar);
+                GuardarEnArchivo(lista); // Sobrescribe el JSON con la lista nueva
+            }
+        }
     }
 }
