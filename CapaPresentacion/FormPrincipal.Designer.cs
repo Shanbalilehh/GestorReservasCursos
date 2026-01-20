@@ -781,7 +781,7 @@
             Controls.Add(tabControlPrincipal);
             Margin = new Padding(3, 4, 3, 4);
             Name = "FormPrincipal";
-            Text = "Aplicacion Reservar Cursos";
+            Text = "GestorAcadémico";
             Load += FormPrincipal_Load;
             tabControlPrincipal.ResumeLayout(false);
             tabLogin.ResumeLayout(false);
