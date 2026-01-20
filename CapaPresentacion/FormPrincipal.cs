@@ -41,7 +41,7 @@ namespace CapaPresentacion
             _servCur = sCur;
             _servRes = sRes;
 
-            
+
             _paginaLogin = tabControlPrincipal.TabPages["tabLogin"];
             _paginaEstudiante = tabControlPrincipal.TabPages["tabEstudiante"];
             _paginaProfesor = tabControlPrincipal.TabPages["tabProfesor"];
@@ -76,7 +76,7 @@ namespace CapaPresentacion
 
                 case RolUsuario.Desarrollador:
                     tabControlPrincipal.TabPages.Add(_paginaAdmin);
-                    InicializarModuloAdmin(); 
+                    InicializarModuloAdmin();
                     break;
             }
         }
@@ -209,9 +209,9 @@ namespace CapaPresentacion
 
                 // 3. Confirmación
                 var confirm = MessageBox.Show(
-                    $"¿Estás seguro de cancelar tu inscripción al curso '{nombreCurso}'?\nLibera espacio para otros estudiantes.", 
-                    "Confirmar Cancelación", 
-                    MessageBoxButtons.YesNo, 
+                    $"¿Estás seguro de cancelar tu inscripción al curso '{nombreCurso}'?\nLibera espacio para otros estudiantes.",
+                    "Confirmar Cancelación",
+                    MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
 
                 if (confirm == DialogResult.Yes)
@@ -393,6 +393,14 @@ namespace CapaPresentacion
             grid.AllowUserToAddRows = false;
         }
 
-        
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FormPrincipal_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
