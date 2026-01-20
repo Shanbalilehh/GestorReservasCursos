@@ -118,7 +118,7 @@
             tabControlPrincipal.Margin = new Padding(3, 4, 3, 4);
             tabControlPrincipal.Name = "tabControlPrincipal";
             tabControlPrincipal.SelectedIndex = 0;
-            tabControlPrincipal.Size = new Size(889, 536);
+            tabControlPrincipal.Size = new Size(923, 580);
             tabControlPrincipal.TabIndex = 0;
             // 
             // tabLogin
@@ -135,7 +135,7 @@
             tabLogin.Margin = new Padding(3, 4, 3, 4);
             tabLogin.Name = "tabLogin";
             tabLogin.Padding = new Padding(3, 4, 3, 4);
-            tabLogin.Size = new Size(881, 491);
+            tabLogin.Size = new Size(915, 535);
             tabLogin.TabIndex = 0;
             tabLogin.Text = "LOGIN";
             // 
@@ -212,7 +212,7 @@
             tabEstudiante.Margin = new Padding(3, 4, 3, 4);
             tabEstudiante.Name = "tabEstudiante";
             tabEstudiante.Padding = new Padding(3, 4, 3, 4);
-            tabEstudiante.Size = new Size(881, 491);
+            tabEstudiante.Size = new Size(915, 535);
             tabEstudiante.TabIndex = 1;
             tabEstudiante.Text = "ESTUDIANTE";
             tabEstudiante.UseVisualStyleBackColor = true;
@@ -229,7 +229,7 @@
             tabControl1.Multiline = true;
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(875, 483);
+            tabControl1.Size = new Size(909, 527);
             tabControl1.TabIndex = 4;
             // 
             // tabMisReservas
@@ -241,7 +241,7 @@
             tabMisReservas.Margin = new Padding(3, 4, 3, 4);
             tabMisReservas.Name = "tabMisReservas";
             tabMisReservas.Padding = new Padding(3, 4, 3, 4);
-            tabMisReservas.Size = new Size(867, 438);
+            tabMisReservas.Size = new Size(901, 482);
             tabMisReservas.TabIndex = 0;
             tabMisReservas.Text = "Mis Reservas";
             tabMisReservas.UseVisualStyleBackColor = true;
@@ -289,7 +289,7 @@
             tabOferta.Margin = new Padding(3, 4, 3, 4);
             tabOferta.Name = "tabOferta";
             tabOferta.Padding = new Padding(3, 4, 3, 4);
-            tabOferta.Size = new Size(867, 438);
+            tabOferta.Size = new Size(892, 440);
             tabOferta.TabIndex = 1;
             tabOferta.Text = "Oferta Academica";
             tabOferta.UseVisualStyleBackColor = true;
@@ -338,7 +338,7 @@
             tabProfesor.Location = new Point(4, 41);
             tabProfesor.Margin = new Padding(3, 4, 3, 4);
             tabProfesor.Name = "tabProfesor";
-            tabProfesor.Size = new Size(881, 491);
+            tabProfesor.Size = new Size(915, 535);
             tabProfesor.TabIndex = 2;
             tabProfesor.Text = "PROFESOR";
             tabProfesor.UseVisualStyleBackColor = true;
@@ -384,7 +384,7 @@
             tabAdmin.Location = new Point(4, 41);
             tabAdmin.Margin = new Padding(3, 4, 3, 4);
             tabAdmin.Name = "tabAdmin";
-            tabAdmin.Size = new Size(881, 491);
+            tabAdmin.Size = new Size(915, 535);
             tabAdmin.TabIndex = 3;
             tabAdmin.Text = "ADMIN";
             tabAdmin.UseVisualStyleBackColor = true;
@@ -401,7 +401,7 @@
             tabControl2.Multiline = true;
             tabControl2.Name = "tabControl2";
             tabControl2.SelectedIndex = 0;
-            tabControl2.Size = new Size(881, 491);
+            tabControl2.Size = new Size(915, 535);
             tabControl2.TabIndex = 9;
             // 
             // tabPage1
@@ -423,7 +423,7 @@
             tabPage1.Margin = new Padding(3, 4, 3, 4);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3, 4, 3, 4);
-            tabPage1.Size = new Size(873, 446);
+            tabPage1.Size = new Size(907, 490);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Estudiantes";
             // 
@@ -555,7 +555,7 @@
             tabPage2.Margin = new Padding(3, 4, 3, 4);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3, 4, 3, 4);
-            tabPage2.Size = new Size(873, 446);
+            tabPage2.Size = new Size(907, 490);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Profesores";
             // 
@@ -585,7 +585,7 @@
             txtPassProf.Location = new Point(564, 144);
             txtPassProf.Margin = new Padding(3, 4, 3, 4);
             txtPassProf.Name = "txtPassProf";
-            txtPassProf.Size = new Size(111, 40);
+            txtPassProf.Size = new Size(172, 40);
             txtPassProf.TabIndex = 13;
             // 
             // txtUserProf
@@ -594,7 +594,7 @@
             txtUserProf.Location = new Point(564, 86);
             txtUserProf.Margin = new Padding(3, 4, 3, 4);
             txtUserProf.Name = "txtUserProf";
-            txtUserProf.Size = new Size(111, 40);
+            txtUserProf.Size = new Size(172, 40);
             txtUserProf.TabIndex = 12;
             // 
             // label6
@@ -609,11 +609,12 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(128, 152);
+            label7.Location = new Point(114, 148);
             label7.Name = "label7";
             label7.Size = new Size(152, 32);
             label7.TabIndex = 10;
             label7.Text = "Especialidad:";
+            label7.Click += label7_Click;
             // 
             // label8
             // 
@@ -626,7 +627,7 @@
             // 
             // btnGuardarProf
             // 
-            btnGuardarProf.Location = new Point(366, 211);
+            btnGuardarProf.Location = new Point(399, 235);
             btnGuardarProf.Margin = new Padding(3, 4, 3, 4);
             btnGuardarProf.Name = "btnGuardarProf";
             btnGuardarProf.Size = new Size(111, 76);
@@ -637,10 +638,10 @@
             // 
             // txtEspecialidadProf
             // 
-            txtEspecialidadProf.Location = new Point(271, 144);
+            txtEspecialidadProf.Location = new Point(272, 144);
             txtEspecialidadProf.Margin = new Padding(3, 4, 3, 4);
             txtEspecialidadProf.Name = "txtEspecialidadProf";
-            txtEspecialidadProf.Size = new Size(111, 40);
+            txtEspecialidadProf.Size = new Size(149, 40);
             txtEspecialidadProf.TabIndex = 7;
             // 
             // txtNombreProf
@@ -648,7 +649,7 @@
             txtNombreProf.Location = new Point(271, 86);
             txtNombreProf.Margin = new Padding(3, 4, 3, 4);
             txtNombreProf.Name = "txtNombreProf";
-            txtNombreProf.Size = new Size(111, 40);
+            txtNombreProf.Size = new Size(150, 40);
             txtNombreProf.TabIndex = 6;
             // 
             // tabPage3
@@ -667,14 +668,14 @@
             tabPage3.Location = new Point(4, 41);
             tabPage3.Margin = new Padding(3, 4, 3, 4);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(873, 446);
+            tabPage3.Size = new Size(907, 490);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Cursos";
             // 
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(242, 198);
+            label13.Location = new Point(239, 243);
             label13.Name = "label13";
             label13.Size = new Size(124, 32);
             label13.TabIndex = 15;
@@ -683,7 +684,7 @@
             // cboProfesores
             // 
             cboProfesores.FormattingEnabled = true;
-            cboProfesores.Location = new Point(366, 194);
+            cboProfesores.Location = new Point(365, 235);
             cboProfesores.Margin = new Padding(3, 4, 3, 4);
             cboProfesores.Name = "cboProfesores";
             cboProfesores.Size = new Size(134, 40);
@@ -692,7 +693,7 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(274, 155);
+            label12.Location = new Point(256, 169);
             label12.Name = "label12";
             label12.Size = new Size(78, 32);
             label12.TabIndex = 13;
@@ -700,7 +701,7 @@
             // 
             // numCupoCur
             // 
-            numCupoCur.Location = new Point(366, 152);
+            numCupoCur.Location = new Point(365, 167);
             numCupoCur.Margin = new Padding(3, 4, 3, 4);
             numCupoCur.Name = "numCupoCur";
             numCupoCur.Size = new Size(133, 40);
@@ -709,7 +710,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(340, 39);
+            label9.Location = new Point(293, 22);
             label9.Name = "label9";
             label9.Size = new Size(249, 32);
             label9.TabIndex = 11;
@@ -718,7 +719,7 @@
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(260, 114);
+            label10.Location = new Point(256, 119);
             label10.Name = "label10";
             label10.Size = new Size(102, 32);
             label10.TabIndex = 10;
@@ -735,7 +736,7 @@
             // 
             // btnGuardarCur
             // 
-            btnGuardarCur.Location = new Point(366, 250);
+            btnGuardarCur.Location = new Point(365, 312);
             btnGuardarCur.Margin = new Padding(3, 4, 3, 4);
             btnGuardarCur.Name = "btnGuardarCur";
             btnGuardarCur.Size = new Size(111, 76);
@@ -746,7 +747,7 @@
             // 
             // txtHorarioCur
             // 
-            txtHorarioCur.Location = new Point(366, 111);
+            txtHorarioCur.Location = new Point(366, 117);
             txtHorarioCur.Margin = new Padding(3, 4, 3, 4);
             txtHorarioCur.Name = "txtHorarioCur";
             txtHorarioCur.Size = new Size(111, 40);
@@ -754,10 +755,10 @@
             // 
             // txtNombreCur
             // 
-            txtNombreCur.Location = new Point(366, 69);
+            txtNombreCur.Location = new Point(365, 69);
             txtNombreCur.Margin = new Padding(3, 4, 3, 4);
             txtNombreCur.Name = "txtNombreCur";
-            txtNombreCur.Size = new Size(111, 40);
+            txtNombreCur.Size = new Size(201, 40);
             txtNombreCur.TabIndex = 6;
             // 
             // button4
@@ -776,7 +777,7 @@
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(889, 536);
+            ClientSize = new Size(923, 580);
             Controls.Add(tabControlPrincipal);
             Margin = new Padding(3, 4, 3, 4);
             Name = "FormPrincipal";
