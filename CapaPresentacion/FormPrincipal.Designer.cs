@@ -141,10 +141,10 @@
             // 
             // button2
             // 
-            button2.Location = new Point(443, 271);
+            button2.Location = new Point(479, 271);
             button2.Margin = new Padding(3, 4, 3, 4);
             button2.Name = "button2";
-            button2.Size = new Size(173, 59);
+            button2.Size = new Size(154, 59);
             button2.TabIndex = 14;
             button2.Text = "Cancelar";
             button2.UseVisualStyleBackColor = true;
@@ -186,7 +186,7 @@
             // 
             // btnIngresar
             // 
-            btnIngresar.Location = new Point(237, 271);
+            btnIngresar.Location = new Point(294, 271);
             btnIngresar.Margin = new Padding(3, 4, 3, 4);
             btnIngresar.Name = "btnIngresar";
             btnIngresar.Size = new Size(143, 59);
@@ -289,7 +289,7 @@
             tabOferta.Margin = new Padding(3, 4, 3, 4);
             tabOferta.Name = "tabOferta";
             tabOferta.Padding = new Padding(3, 4, 3, 4);
-            tabOferta.Size = new Size(892, 440);
+            tabOferta.Size = new Size(901, 482);
             tabOferta.TabIndex = 1;
             tabOferta.Text = "Oferta Academica";
             tabOferta.UseVisualStyleBackColor = true;
