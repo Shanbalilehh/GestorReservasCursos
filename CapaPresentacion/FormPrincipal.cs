@@ -47,7 +47,100 @@ namespace CapaPresentacion
             _paginaProfesor = tabControlPrincipal.TabPages["tabProfesor"];
             _paginaAdmin = tabControlPrincipal.TabPages["tabAdmin"];
 
+            ConfigurarDiseñoProfesional();
+
             ResetearVista();
+        }
+        private Panel panelLateral;
+        private Label lblTituloHeader;
+        private Button btnLogoutDinamico;
+
+        private void ConfigurarDiseñoProfesional()
+        {
+            // 1. Estilo General del Formulario
+            GestorDeEstilos.AplicarTemaFormulario(this);
+            this.Text = "Sistema de Gestión Académica"; // Título de la ventana
+
+            // 2. Ocultar las pestañas feas del TabControl
+            GestorDeEstilos.ConvertirEnDashboard(tabControlPrincipal);
+
+            // 3. Crear el HEADER (Título Superior)
+            lblTituloHeader = new Label();
+            lblTituloHeader.Dock = DockStyle.Top;
+            lblTituloHeader.Height = 60;
+            lblTituloHeader.BackColor = Color.White;
+            lblTituloHeader.ForeColor = GestorDeEstilos.ColorPrimario;
+            lblTituloHeader.Font = GestorDeEstilos.FuenteTitulo;
+            lblTituloHeader.TextAlign = ContentAlignment.MiddleLeft;
+            lblTituloHeader.Padding = new Padding(20, 0, 0, 0);
+            lblTituloHeader.Text = "Bienvenido";
+            this.Controls.Add(lblTituloHeader); // Agregar primero (Top)
+
+            // 4. Crear el SIDEBAR (Menú Lateral)
+            panelLateral = new Panel();
+            panelLateral.Dock = DockStyle.Left;
+            panelLateral.Width = 200;
+            panelLateral.BackColor = GestorDeEstilos.ColorPrimario;
+            panelLateral.Padding = new Padding(10);
+            
+            // Logo o Título del Menú
+            Label lblLogo = new Label();
+            lblLogo.Text = "ACADEMIA\nXXXXXX";
+            lblLogo.Dock = DockStyle.Top;
+            lblLogo.Height = 100;
+            lblLogo.ForeColor = Color.White;
+            lblLogo.Font = new Font("Segoe UI", 16, FontStyle.Bold);
+            lblLogo.TextAlign = ContentAlignment.MiddleCenter;
+            panelLateral.Controls.Add(lblLogo);
+
+            // Botón de Cerrar Sesión (En el menú lateral)
+            btnLogoutDinamico = new Button();
+            btnLogoutDinamico.Text = "Cerrar Sesión";
+            btnLogoutDinamico.Dock = DockStyle.Bottom;
+            btnLogoutDinamico.Height = 45;
+            btnLogoutDinamico.Click += btnCerrarSesion_Click; // Reusamos tu evento
+            GestorDeEstilos.EstilizarBoton(btnLogoutDinamico, false); // Estilo rojo/secundario
+            panelLateral.Controls.Add(btnLogoutDinamico);
+
+            this.Controls.Add(panelLateral); // Agregar segundo (Left)
+
+            // 5. Ajustar el TabControl existente
+            // Importante: BringToFront para asegurar que no quede tapado, 
+            // pero después de agregar los Paneles con Dock.
+            tabControlPrincipal.Dock = DockStyle.Fill;
+            this.Controls.Add(tabControlPrincipal);
+            tabControlPrincipal.BringToFront();
+
+            // 6. ESTILIZAR CONTROLES INTERNOS (Automágico)
+            // Recorremos las pestañas para estilizar tus botones y grids existentes
+            EstilizarControlesRecursivos(tabControlPrincipal);
+        }
+
+        // Método recursivo para encontrar tus controles y pintarlos
+        private void EstilizarControlesRecursivos(Control contenedor)
+        {
+            foreach (Control c in contenedor.Controls)
+            {
+                if (c is Button btn)
+                {
+                    // Si el botón dice "Cancelar" o "Eliminar", lo pintamos rojo
+                    bool esPrimario = !btn.Text.ToLower().Contains("cancelar") && !btn.Text.ToLower().Contains("eliminar");
+                    GestorDeEstilos.EstilizarBoton(btn, esPrimario);
+                }
+                else if (c is DataGridView dgv)
+                {
+                    GestorDeEstilos.EstilizarGrid(dgv);
+                }
+                else if (c is TextBox txt)
+                {
+                    // Opcional: Darle un borde o padding si quisieras
+                }
+                else if (c is TabPage || c is Panel || c is GroupBox)
+                {
+                    // Seguir buscando adentro
+                    EstilizarControlesRecursivos(c);
+                }
+            }
         }
 
         // --- GESTIÓN DE VISTAS ---
@@ -55,12 +148,21 @@ namespace CapaPresentacion
         {
             tabControlPrincipal.TabPages.Clear();
             tabControlPrincipal.TabPages.Add(_paginaLogin);
-            this.Text = "Sistema de Cursos - Bienvenido";
+            if(panelLateral != null) panelLateral.Visible = false;
+            if(lblTituloHeader != null) lblTituloHeader.Visible = false;
+            
+            this.Text = "Sistema de Cursos - Login";
         }
 
         private void HabilitarModulo(RolUsuario rol)
         {
             tabControlPrincipal.TabPages.Remove(_paginaLogin);
+            if(panelLateral != null) panelLateral.Visible = true;
+            if(lblTituloHeader != null) 
+            {
+                lblTituloHeader.Visible = true;
+                lblTituloHeader.Text = $"Portal {rol} | {_usuarioActual.Username}";
+            }
 
             switch (rol)
             {
@@ -391,11 +493,6 @@ namespace CapaPresentacion
             grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             grid.RowHeadersVisible = false;
             grid.AllowUserToAddRows = false;
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void FormPrincipal_Load(object sender, EventArgs e)
